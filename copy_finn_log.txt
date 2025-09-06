@@ -1,0 +1,137 @@
+**********************
+PowerShell transcript start
+Start time: 20250904192049
+Username: LORENZO\loren
+RunAs User: LORENZO\loren
+Configuration Name: 
+Machine: LORENZO (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Program Files\WindowsApps\Microsoft.PowerShell_7.5.2.0_x64__8wekyb3d8bbwe\pwsh.dll
+Process ID: 39404
+PSVersion: 7.5.2
+PSEdition: Core
+GitCommitId: 7.5.2
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+PS C:\AI-MEME-companion> # Percorsi
+PS C:\AI-MEME-companion> $root   = Split-Path -Parent $MyInvocation.MyCommand.Path
+>> TerminatingError(Split-Path): "Cannot bind argument to parameter 'Path' because it is null."
+>> TerminatingError(Split-Path): "Cannot bind argument to parameter 'Path' because it is null."
+Cannot bind argument to parameter 'Path' because it is null.
+Split-Path: Cannot bind argument to parameter 'Path' because it is null.
+PS C:\AI-MEME-companion> $input  = Join-Path $root "assets\input"
+>> TerminatingError(Join-Path): "Cannot bind argument to parameter 'Path' because it is null."
+>> TerminatingError(Join-Path): "Cannot bind argument to parameter 'Path' because it is null."
+Cannot bind argument to parameter 'Path' because it is null.
+Join-Path: Cannot bind argument to parameter 'Path' because it is null.
+PS C:\AI-MEME-companion> $public = Join-Path $root "public"
+>> TerminatingError(Join-Path): "Cannot bind argument to parameter 'Path' because it is null."
+>> TerminatingError(Join-Path): "Cannot bind argument to parameter 'Path' because it is null."
+Cannot bind argument to parameter 'Path' because it is null.
+Join-Path: Cannot bind argument to parameter 'Path' because it is null.
+PS C:\AI-MEME-companion> $comp   = Join-Path $public "companion"
+>> TerminatingError(Join-Path): "Cannot bind argument to parameter 'Path' because it is null."
+>> TerminatingError(Join-Path): "Cannot bind argument to parameter 'Path' because it is null."
+Cannot bind argument to parameter 'Path' because it is null.
+Join-Path: Cannot bind argument to parameter 'Path' because it is null.
+PS C:\AI-MEME-companion> # Crea la cartella di destinazione
+PS C:\AI-MEME-companion> New-Item -ItemType Directory -Force -Path $comp | Out-Null
+>> TerminatingError(New-Item): "Cannot bind argument to parameter 'Path' because it is null."
+>> TerminatingError(New-Item): "Cannot bind argument to parameter 'Path' because it is null."
+Cannot bind argument to parameter 'Path' because it is null.
+New-Item: Cannot bind argument to parameter 'Path' because it is null.
+PS C:\AI-MEME-companion> # Sorgenti (NOMI ESATTI, con spazi)
+PS C:\AI-MEME-companion> $topSrc = Join-Path $input "finn bocca sopra.png"
+>> TerminatingError(Join-Path): "Cannot bind argument to parameter 'Path' because it is an empty string."
+>> TerminatingError(Join-Path): "Cannot bind argument to parameter 'Path' because it is an empty string."
+Cannot bind argument to parameter 'Path' because it is an empty string.
+Join-Path: Cannot bind argument to parameter 'Path' because it is an empty string.
+PS C:\AI-MEME-companion> $jawSrc = Join-Path $input "finn bocca.png"
+>> TerminatingError(Join-Path): "Cannot bind argument to parameter 'Path' because it is an empty string."
+>> TerminatingError(Join-Path): "Cannot bind argument to parameter 'Path' because it is an empty string."
+Cannot bind argument to parameter 'Path' because it is an empty string.
+Join-Path: Cannot bind argument to parameter 'Path' because it is an empty string.
+PS C:\AI-MEME-companion> # Controlli
+PS C:\AI-MEME-companion> if (!(Test-Path -LiteralPath $topSrc)) {
+  Write-Host "Manca: $topSrc"
+  Write-Host "Contenuto di $input:"
+  Get-ChildItem -LiteralPath $input -File | Select-Object -ExpandProperty Name
+  Stop-Transcript | Out-Null
+  exit 1
+}
+At line:3 char:28
++   Write-Host "Contenuto di $input:"
++                            ~~~~~~~
+Variable reference is not valid. ':' was not followed by a valid variable name character. Consider using ${} to delimit the name.
+ParserError: 
+Line |
+   3 |    Write-Host "Contenuto di $input:"
+     |                             ~~~~~~~
+     | Variable reference is not valid. ':' was not followed by a valid variable name character. Consider using ${} to
+     | delimit the name.
+
+PS C:\AI-MEME-companion> if (!(Test-Path -LiteralPath $jawSrc)) {
+  Write-Host "Manca: $jawSrc"
+  Write-Host "Contenuto di $input:"
+  Get-ChildItem -LiteralPath $input -File | Select-Object -ExpandProperty Name
+  Stop-Transcript | Out-Null
+  exit 1
+}
+At line:3 char:28
++   Write-Host "Contenuto di $input:"
++                            ~~~~~~~
+Variable reference is not valid. ':' was not followed by a valid variable name character. Consider using ${} to delimit the name.
+ParserError: 
+Line |
+   3 |    Write-Host "Contenuto di $input:"
+     |                             ~~~~~~~
+     | Variable reference is not valid. ':' was not followed by a valid variable name character. Consider using ${} to
+     | delimit the name.
+
+PS C:\AI-MEME-companion> # Copia con nomi fissi che usa la UI
+PS C:\AI-MEME-companion> Copy-Item -LiteralPath $topSrc -Destination (Join-Path $comp "top.png") -Force
+>> TerminatingError(Join-Path): "Cannot bind argument to parameter 'Path' because it is null."
+>> TerminatingError(Join-Path): "Cannot bind argument to parameter 'Path' because it is null."
+Cannot bind argument to parameter 'Path' because it is null.
+Join-Path: Cannot bind argument to parameter 'Path' because it is null.
+PS C:\AI-MEME-companion> Copy-Item -LiteralPath $jawSrc -Destination (Join-Path $comp "jaw.png") -Force
+>> TerminatingError(Join-Path): "Cannot bind argument to parameter 'Path' because it is null."
+>> TerminatingError(Join-Path): "Cannot bind argument to parameter 'Path' because it is null."
+Cannot bind argument to parameter 'Path' because it is null.
+Join-Path: Cannot bind argument to parameter 'Path' because it is null.
+PS C:\AI-MEME-companion> Write-Host "Copiati:"
+Copiati:
+PS C:\AI-MEME-companion> Write-Host " - $(Join-Path $comp 'top.png')"
+>> TerminatingError(Join-Path): "Cannot bind argument to parameter 'Path' because it is null."
+>> TerminatingError(Join-Path): "Cannot bind argument to parameter 'Path' because it is null."
+Cannot bind argument to parameter 'Path' because it is null.
+Join-Path: Cannot bind argument to parameter 'Path' because it is null.
+PS C:\AI-MEME-companion> Write-Host " - $(Join-Path $comp 'jaw.png')"
+>> TerminatingError(Join-Path): "Cannot bind argument to parameter 'Path' because it is null."
+>> TerminatingError(Join-Path): "Cannot bind argument to parameter 'Path' because it is null."
+Cannot bind argument to parameter 'Path' because it is null.
+Join-Path: Cannot bind argument to parameter 'Path' because it is null.
+PS C:\AI-MEME-companion> # Chiude qualsiasi server su 3000 e riavvia "npm start"
+PS C:\AI-MEME-companion> try {
+  $pids = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction Stop |
+          Select-Object -ExpandProperty OwningProcess -Unique
+  foreach ($pid in $pids) { Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue }
+} catch {}
+PS C:\AI-MEME-companion> Start-Process npm -ArgumentList "start" -WorkingDirectory $root | Out-Null
+>> TerminatingError(Start-Process): "Cannot validate argument on parameter 'WorkingDirectory'. The argument is null or empty. Provide an argument that is not null or empty, and then try the command again."
+>> TerminatingError(Start-Process): "Cannot validate argument on parameter 'WorkingDirectory'. The argument is null or empty. Provide an argument that is not null or empty, and then try the command again."
+Cannot validate argument on parameter 'WorkingDirectory'. The argument is null or empty. Provide an argument that is not null or empty, and then try the command again.
+Start-Process: Cannot validate argument on parameter 'WorkingDirectory'. The argument is null or empty. Provide an argument that is not null or empty, and then try the command again.
+PS C:\AI-MEME-companion> Start-Sleep -Seconds 2
+PS C:\AI-MEME-companion> # Apri con cache-busting
+PS C:\AI-MEME-companion> $ts = [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
+PS C:\AI-MEME-companion> Start-Process "http://localhost:3000/?ts=$ts"
+PS C:\AI-MEME-companion> Stop-Transcript | Out-Null
+**********************
+PowerShell transcript end
+End time: 20250904192053
+**********************

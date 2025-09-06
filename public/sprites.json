@@ -1,0 +1,88 @@
+{
+  "base": 64,
+  "sheetWidth": 192,
+  "sheetHeight": 576,
+  "rows": {
+    "neutral": {
+      "row": 0,
+      "frames": 3,
+      "x": 0,
+      "y": 0,
+      "w": 64,
+      "h": 64,
+      "fps": 8
+    },
+    "cry_rage": {
+      "row": 1,
+      "frames": 3,
+      "x": 0,
+      "y": 64,
+      "w": 64,
+      "h": 64,
+      "fps": 8
+    },
+    "defeated": {
+      "row": 2,
+      "frames": 3,
+      "x": 0,
+      "y": 128,
+      "w": 64,
+      "h": 64,
+      "fps": 8
+    },
+    "void": {
+      "row": 3,
+      "frames": 3,
+      "x": 0,
+      "y": 192,
+      "w": 64,
+      "h": 64,
+      "fps": 8
+    },
+    "profit": {
+      "row": 4,
+      "frames": 3,
+      "x": 0,
+      "y": 256,
+      "w": 64,
+      "h": 64,
+      "fps": 8
+    },
+    "homeless": {
+      "row": 5,
+      "frames": 3,
+      "x": 0,
+      "y": 320,
+      "w": 64,
+      "h": 64,
+      "fps": 8
+    },
+    "mcd": {
+      "row": 6,
+      "frames": 3,
+      "x": 0,
+      "y": 384,
+      "w": 64,
+      "h": 64,
+      "fps": 8
+    },
+    "stupid": {
+      "row": 7,
+      "frames": 3,
+      "x": 0,
+      "y": 448,
+      "w": 64,
+      "h": 64,
+      "fps": 8
+    },
+    "chad": {
+      "row": 8,
+      "frames": 3,
+      "x": 0,
+      "y": 512,
+      "w": 64,
+      "h": 64,
+      "fps": 8
+    }
+  }
+}

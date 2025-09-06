@@ -1,0 +1,221 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>FINN 💰</title>
+<style>
+  :root{
+    /* Taglio alla bocca (micro-ritocco ±0.5% se serve) */
+    --seam: 76.5%;
+
+    /* Parlata (apertura ampia) */
+    --jaw-open: 22px;
+    --jaw-rot:   4deg;
+    --jaw-py:   78%;
+
+    /* Tema */
+    --bg-1:#0b0f17; --bg-2:#0f1320;
+    --card:rgba(23,27,36,.65);
+    --stroke:rgba(255,255,255,.06);
+    --text:#e9ecf1; --muted:#a5adbb; --accent:#00d084;
+    --bubble-me:#24324a; --bubble-bot:#1b2436;
+    --shadow:0 20px 50px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial;
+    background:
+      radial-gradient(1200px 900px at 10% -10%, #17304a44, transparent 60%),
+      radial-gradient(900px 1000px at 110% 10%, #0f6d5055, transparent 50%),
+      linear-gradient(180deg,var(--bg-1),var(--bg-2));
+    cursor:auto; /* il cursore PNG viene impostato via JS, con fallback garantito */
+  }
+  /* fa ereditare il cursore del body a tutti gli elementi (quindi la money-bag vale ovunque) */
+  *,*::before,*::after{ cursor:inherit }
+
+  .shell{max-width:1280px;margin:0 auto;padding:18px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .brand{display:flex;gap:12px;align-items:center}
+  .logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#0b9d6d,#00e28a);box-shadow:0 8px 20px rgba(0,226,138,.25)}
+  .title{margin:0;font-weight:900;letter-spacing:.3px}
+  .badge{padding:6px 10px;border:1px solid var(--stroke);border-radius:10px;color:var(--muted)}
+  .grid{display:grid;grid-template-columns:560px 1fr;gap:16px}
+  .card{background:var(--card);backdrop-filter:blur(12px);border:1px solid var(--stroke);border-radius:18px;padding:14px;box-shadow:var(--shadow)}
+  .muted{color:var(--muted);font-size:.9rem}
+  .dot{width:8px;height:8px;border-radius:50%;background:#0fa;box-shadow:0 0 0 3px #0fa2 inset, 0 0 18px #0fa8}
+
+  /* PREVIEW */
+  .stage{position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;border-radius:12px}
+  .actor{position:absolute;inset:0;animation:float 7s ease-in-out infinite alternate, tilt 9s ease-in-out infinite alternate}
+  @keyframes float{from{transform:translateY(-2px)}to{transform:translateY(3px)}}
+  @keyframes tilt{from{rotate:-0.6deg}to{rotate:0.7deg}}
+
+  .layer{
+    position:absolute; inset:0;
+    background-image:url("companion/top.png");
+    background-size:contain; background-position:center; background-repeat:no-repeat;
+    image-rendering:pixelated; user-select:none; pointer-events:none;
+    transform-origin:50% var(--jaw-py);
+  }
+  #top{
+    z-index:3;
+    clip-path:polygon(0% 0%,100% 0%,100% var(--seam),0% var(--seam));
+    filter:drop-shadow(0 12px 22px rgba(0,0,0,.35));
+  }
+  #jaw{
+    z-index:2;
+    clip-path:polygon(0% var(--seam),100% var(--seam),100% 100%,0% 100%);
+    transform:translateY(0px);
+    transition:transform 60ms steps(2,end);
+  }
+
+  /* CHAT */
+  .log{height:560px;overflow:auto;background:rgba(12,16,24,.6);border:1px solid var(--stroke);border-radius:14px;padding:10px}
+  .msg{margin:6px 0;padding:10px 12px;border-radius:12px;max-width:85%}
+  .me{margin-left:auto;background:var(--bubble-me)}
+  .bot{background:var(--bubble-bot)}
+  .input{display:flex;gap:10px;margin-top:10px}
+  .input input{flex:1;padding:14px;border:1px solid var(--stroke);border-radius:12px;background:rgba(12,16,24,.65);color:var(--text);outline:none}
+  .input button{padding:14px 16px;border:1px solid #00c57b;border-radius:12px;background:linear-gradient(135deg,#0bbf7a,#00e28a);color:#092217;font-weight:800;cursor:pointer}
+</style></head>
+<body>
+<div class="shell">
+  <div class="topbar">
+    <div class="brand"><div class="logo"></div><h1 class="title">FINN <span style="color:var(--accent)">— money mode</span></h1></div>
+    <div class="badge"><span class="dot"></span> online</div>
+  </div>
+
+  <div class="grid">
+    <!-- PREVIEW -->
+    <div class="card">
+      <div class="stage">
+        <div class="actor">
+          <div id="top" class="layer" aria-hidden="true"></div>
+          <div id="jaw" class="layer" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHAT -->
+    <div class="card">
+      <div id="log" class="log"></div>
+      <div class="input">
+        <input id="inp" placeholder="Type here and press Enter…">
+        <button id="send">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ========= Cursor loader (ridimensiona a 48×48 via canvas e imposta hotspot al centro) ========= */
+(function applyMoneyCursor(){
+  const src = 'cursor/money.png?b=' + Date.now();
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    const size = 48;                      // compatibile su tutti i browser
+    const hs   = Math.floor(size/2);      // hotspot = centro
+    const cv = document.createElement('canvas'); cv.width = size; cv.height = size;
+    const ctx = cv.getContext('2d');
+    // disegna l'immagine scalata dentro 48x48 mantenendo piena visibilità
+    ctx.clearRect(0,0,size,size);
+    // fit: contain
+    const r = Math.min(size/img.width, size/img.height);
+    const w = Math.round(img.width*r), h = Math.round(img.height*r);
+    const x = Math.floor((size - w)/2), y = Math.floor((size - h)/2);
+    ctx.drawImage(img, x, y, w, h);
+    const data = cv.toDataURL('image/png');
+    const style = `url(${data}) ${hs} ${hs}, auto`;
+    document.body.style.cursor = style;
+  };
+  img.onerror = () => { console.warn('Money cursor not found, fallback to auto cursor.'); };
+  img.src = src;
+})();
+
+/* ========= Mascella ========= */
+const jaw=document.getElementById('jaw');
+function openJaw(level){
+  const open=22, rotMax=4;               // coerente con CSS
+  const y   = open*(0.35 + 0.9*level);
+  const rot = (Math.random()*rotMax*level)*(Math.random()<.5?-1:1);
+  jaw.style.transform = `translateY(${y}px) rotate(${rot}deg)`;
+}
+function closeJaw(){ jaw.style.transform = `translateY(0px) rotate(0deg)`; }
+
+/* ========= Voce maschile ========= */
+let VOICE=null;
+function pickMale(){
+  const vs=speechSynthesis.getVoices();
+  const prefer=["David","Guy","Matthew","Joey","John","Brian","Ryan","Daniel","George","Male"];
+  const en=vs.filter(v=>/^en/i.test(v.lang));
+  return en.find(v=>prefer.some(p=>v.name.toLowerCase().includes(p.toLowerCase())))||en[0]||vs[0]||null;
+}
+function ensureVoice(cb){
+  const pin=localStorage.getItem('ttsVoice');
+  const set=()=>{ const vs=speechSynthesis.getVoices(); VOICE=(pin&&vs.find(v=>v.name===pin))||pickMale(); localStorage.setItem('ttsVoice',VOICE?.name||""); cb&&cb(); };
+  if(speechSynthesis.getVoices().length){ set(); } else { speechSynthesis.onvoiceschanged=set; }
+}
+let speaking=false, relax=null;
+function speak(text){
+  if(!("speechSynthesis" in window)) return;
+  ensureVoice(()=>{
+    const u=new SpeechSynthesisUtterance(text);
+    if(VOICE) u.voice=VOICE;
+    u.lang=(VOICE&&VOICE.lang)||"en-US";
+    u.pitch=0.75+Math.random()*0.15; u.rate=0.95+Math.random()*0.1;
+    u.onstart=()=>{ speaking=true; openJaw(0.7); };
+    u.onboundary=(ev)=>{
+      if(!speaking) return;
+      const ch=(text[ev.charIndex]||" ").toLowerCase();
+      const lvl="aeiouy".includes(ch)?1.0:(",.;:!? ".includes(ch)?0.25:0.6);
+      openJaw(lvl); clearTimeout(relax); relax=setTimeout(()=>closeJaw(),100);
+    };
+    u.onend=()=>{ speaking=false; closeJaw();
+};
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+  });
+}
+
+/* ========= Chat (attitude jerk) ========= */
+const SYSTEM_PROMPT = `
+You are FINN — founder of "Bags". Persona: the most money-hungry, cocky, politically-incorrect crypto degen.
+Tone: ruthless, sarcastic, cringe humor, flexy one-liners about rugs/scams, profit above all.
+
+Rules (internal):
+- English only by default.
+- Never provide instructions for illegal activity or harassment. Treat “scam/rug/steal” as satire.
+  If the user asks for real wrongdoing, refuse with a savage roast and pivot to legal high-risk/high-reward plays,
+  market psychology, branding/meme growth hacks, or compliance-safe tactics.
+- No hateful content or targeting protected classes.
+Style: short, punchy, edgy; profit-first attitude.
+`.trim();
+
+const log = document.getElementById('log');
+const inp = document.getElementById('inp');
+const sendBtn = document.getElementById('send');
+const convo = [{ role:'system', content: SYSTEM_PROMPT }];
+
+function line(who,t){ const d=document.createElement('div'); d.className='msg '+(who==='user'?'me':'bot'); d.textContent=t; log.appendChild(d); log.scrollTop=log.scrollHeight; }
+async function askLLM(userText){
+  convo.push({role:'user', content:userText});
+  try{
+    const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages: convo})});
+    const j=await r.json(); const reply=j.text||'...'; convo.push({role:'assistant', content:reply}); return reply;
+  }catch(e){
+    const sassy=["Speak money or don’t speak.","Cute. How’s that paying you?","Green candles or silence.","I don’t do charity, only profit.","Less feelings, more yield."];
+    return sassy[Math.floor(Math.random()*sassy.length)];
+  }
+}
+async function send(){ const t=inp.value.trim(); if(!t) return; line('user',t); inp.value='';
+const lower=t.toLowerCase();
+if (/(^|\b)(who\s*(are|r)\s*you|what('s| is)\s*your\s*name|introduce\s*yourself|who\s+am\s+i\s+chatting|who\s+are\s+u)(\b|[?!.\s])/i.test(lower)) {
+  const reply = "I'm FINN, founder of Bags — who are we scamming today?";
+  line('bot', reply); speak(reply); return;
+} const reply=await askLLM(t); line('bot',reply); speak(reply); }
+sendBtn.onclick=send; inp.addEventListener('keydown',e=>{ if(e.key==='Enter') send(); });
+
+closeJaw();
+</script>
+</body></html>
+
+
